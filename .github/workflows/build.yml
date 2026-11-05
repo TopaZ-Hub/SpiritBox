@@ -16,9 +16,11 @@ jobs:
       - name: Rozpakuj i zbuduj
         run: |
           ls -la
-          echo "SDK: $ANDROID_HOME"
-          for z in *.zip; do unzip -o "$z" -d rozpakowane; done
+          COUNT=$(ls *.zip 2>/dev/null | wc -l)
+          if [ "$COUNT" -ne 1 ]; then echo "BŁĄD: w repo musi być dokładnie 1 plik .zip, jest: $COUNT"; ls *.zip; exit 1; fi
+          unzip -o *.zip -d rozpakowane
           cd "$(dirname "$(find rozpakowane -name gradlew | head -1)")"
+          ls app/src/main/java/pl/duchy/spiritbox/
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/SpiritBox.apk"
