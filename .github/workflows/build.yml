@@ -13,10 +13,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - name: Rozpakuj i zbuduj
         run: |
           ls -la
+          echo "SDK: $ANDROID_HOME"
           for z in *.zip; do unzip -o "$z" -d rozpakowane; done
           cd "$(dirname "$(find rozpakowane -name gradlew | head -1)")"
           chmod +x gradlew
