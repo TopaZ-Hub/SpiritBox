@@ -1,0 +1,28 @@
+name: Zbuduj APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Rozpakuj i zbuduj
+        run: |
+          ls -la
+          for z in *.zip; do unzip -o "$z" -d rozpakowane; done
+          cd "$(dirname "$(find rozpakowane -name gradlew | head -1)")"
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/SpiritBox.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpiritBox-apk
+          path: SpiritBox.apk
